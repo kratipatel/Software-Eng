@@ -1,0 +1,101 @@
+﻿Summary,Issue Type,Description,Priority,Labels,Story Points
+SOL-01 Record validated hourly solar generation,Story,"As a prosumer, I want validated hourly meter readings recorded so that my generated energy can be credited.
+
+Acceptance criteria
+An authenticated meter submits a household ID, timestamp and non-negative kWh value. A valid reading is stored once. A duplicate meter/timestamp does not add credits twice. Invalid identities, missing fields and negative readings are rejected without changing balances.
+
+Backlog group: Meter ingestion
+Traceability: FR-001 / NFR-001
+Dependencies: None
+Estimate: 5 story points.
+Planning reference: SOL-01. Jira assigns its own key.",High,se-lab2,5
+SOL-02 View my available solar credit balance,Story,"As a resident, I want to view my available balance so that I know how many credits I can transfer.
+
+Acceptance criteria
+An authenticated resident sees the balance derived from committed ledger entries. A zero balance displays zero. Requests for another resident are denied. An account with 120 credits shows 120 after the page refreshes.
+
+Backlog group: Resident credits
+Traceability: FR-002 / NFR-002
+Dependencies: SOL-01
+Estimate: 3 story points.
+Planning reference: SOL-02. Jira assigns its own key.",High,se-lab2,3
+SOL-03 Transfer credits with validation and audit,Story,"As a resident, I want to transfer credits to a valid neighbor so that surplus generation benefits their account.
+
+Acceptance criteria
+For sender balance 120, transferring 30 yields sender 90 and recipient increase 30. Invalid recipients, zero or negative amounts and amounts above the balance are rejected. Concurrent requests cannot overspend. Sender debit, recipient credit, audit record and pending billing event commit atomically. A replayed request ID cannot duplicate a transfer.
+
+Backlog group: Resident credits
+Traceability: FR-001 / FR-003 / NFR-002
+Dependencies: SOL-02
+Estimate: 5 story points.
+Planning reference: SOL-03. Jira assigns its own key.",High,se-lab2,5
+SOL-04 Apply credits to utility billing,Story,"As a recipient, I want accepted credits applied to my utility statement so that my monthly bill reflects the offset.
+
+Acceptance criteria
+An accepted transfer creates one billing event. A utility acknowledgement marks it applied. A transient failure retains it for retry. A repeated delivery with the same idempotency key creates only one offset. The displayed status matches the acknowledgement.
+
+Backlog group: Billing offsets
+Traceability: FR-004
+Dependencies: SOL-03
+Estimate: 5 story points.
+Planning reference: SOL-04. Jira assigns its own key.",High,se-lab2,5
+SOL-05 View monthly community activity,Story,"As a co-op manager, I want monthly totals for generation, transfers and billing offsets so that I can monitor the community.
+
+Acceptance criteria
+A manager selects a month and sees all three categories. Totals match a seeded dataset and exclude records outside that month. Resident-only accounts cannot open community reports. An empty month displays zero totals.
+
+Backlog group: Manager reports
+Traceability: FR-005
+Dependencies: SOL-01 / SOL-03 / SOL-04
+Estimate: 5 story points.
+Planning reference: SOL-05. Jira assigns its own key.",Medium,se-lab2,5
+SOL-06 Export a monthly report,Story,"As a co-op manager, I want to export the selected report so that I can share it for reconciliation.
+
+Acceptance criteria
+An authorized manager downloads a CSV for the selected month. Its generation, transfer and offset totals match the displayed report. Headers and month are present. Text cells are escaped to prevent spreadsheet formula execution.
+
+Backlog group: Manager reports
+Traceability: FR-005 extension
+Dependencies: SOL-05
+Estimate: 2 story points.
+Planning reference: SOL-06. Jira assigns its own key.",Medium,se-lab2,2
+SOL-07 Manage resident and manager permissions,Story,"As a co-op administrator, I want resident and manager permissions enforced so that private account data stays restricted.
+
+Acceptance criteria
+Authorized administrators can assign or revoke a manager role. Residents cannot change their own role. Revoked permissions take effect on subsequent requests. A resident cannot read another account by changing an identifier.
+
+Backlog group: Account security
+Traceability: NFR-002
+Dependencies: None
+Estimate: 3 story points.
+Planning reference: SOL-07. Jira assigns its own key.",High,se-lab2,3
+SOL-08 Monitor telemetry availability,Story,"As an operator, I want ingestion health and availability measured so that I can track service reliability.
+
+Acceptance criteria
+A benchmark ingests one hourly reading for each of 500 households without loss or duplication. A dashboard reports successful checks divided by all scheduled checks over a 30-day window against the 99.9% target. The lab benchmark alone does not establish monthly uptime.
+
+Backlog group: Reliability
+Traceability: NFR-001
+Dependencies: SOL-01
+Estimate: 3 story points.
+Planning reference: SOL-08. Jira assigns its own key.",High,se-lab2,3
+SOL-09 Inspect transfer history,Story,"As a resident, I want my transfer history so that I can reconcile my available credits.
+
+Acceptance criteria
+The account owner can view incoming and outgoing transfers with amount, date and request ID. Records belong only to that account and are ordered consistently. No transfers produces an empty state. Pagination does not omit or duplicate records.
+
+Backlog group: Resident credits
+Traceability: FR-003 supporting behavior
+Dependencies: SOL-03
+Estimate: 3 story points.
+Planning reference: SOL-09. Jira assigns its own key.",Medium,se-lab2,3
+SOL-10 Explain a rejected transfer,Story,"As a resident, I want an actionable transfer error so that I can correct invalid input and try again.
+
+Acceptance criteria
+A rejected amount identifies the validation problem without modifying balances. Insufficient funds shows a clear message. The form preserves a safe amount entry. A utility error does not expose credentials or another resident account detail.
+
+Backlog group: Resident credits
+Traceability: FR-003 supporting behavior
+Dependencies: SOL-03
+Estimate: 2 story points.
+Planning reference: SOL-10. Jira assigns its own key.",Medium,se-lab2,2
